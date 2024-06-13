@@ -1,0 +1,27 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  accent-color: color(display-p3 1 0 1);
+  background-color: color(display-p3 0.75 0.75 0.75);
+}
+
+main {
+  margin: 0 3ch;
+}
+
+canvas,
+img,
+progress,
+button {
+  margin: 1.5ch 0;
+  width: 100%;
+}
+
+button {
+  cursor: pointer;
+  padding: 1.5ch;
+}
