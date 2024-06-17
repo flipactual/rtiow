@@ -9,8 +9,7 @@
 
 ## Next Steps
 
-- Add button to start ray tracing
-- Add wireframing so that view can be adjusted without trying to ray trace
-  everything
+- Pinch to zoom
+- Fix wireframe bugs
 - Document what isn't documented
 - Experiment with `oklch`?
