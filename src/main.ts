@@ -4,7 +4,7 @@ import Camera from "./lib/Camera.ts";
 import xoshiro from "./util/xoshiro.ts";
 import getRandomRTIOWFinalScene from "./scene/getRandomRTIOWFinalScene.ts";
 
-const SAMPLES_PER_PIXEL = 500;
+let SAMPLES_PER_PIXEL = 500;
 const WIDTH = 1280;
 const HEIGHT = Math.floor(WIDTH * (9 / 16));
 const SEED: [number, number, number, number] = [1_000, 2_000, 3_000, 4_000];
@@ -26,6 +26,33 @@ progress.max = 100;
 progress.value = 0;
 main.appendChild(progress);
 
+/* Controls */
+const controls = document.createElement("div");
+controls.id = "controls";
+
+/* Samples Per Pixel Input */
+const samplesContainer = document.createElement("div");
+samplesContainer.classList.add("controls-container");
+
+const samplesLabel = document.createElement("label");
+samplesLabel.textContent = "Samples Per Pixel: ";
+samplesLabel.htmlFor = "samplesInput";
+
+const samplesInput = document.createElement("input");
+samplesInput.type = "number";
+samplesInput.id = "samplesInput";
+samplesInput.value = SAMPLES_PER_PIXEL.toString();
+samplesInput.min = "1";
+samplesInput.addEventListener("change", () => {
+	SAMPLES_PER_PIXEL = parseInt(samplesInput.value, 10);
+	startRendering();
+});
+
+samplesContainer.appendChild(samplesLabel);
+samplesContainer.appendChild(samplesInput);
+
+controls.appendChild(samplesContainer);
+
 /* Export */
 const button = document.createElement("button");
 button.textContent = "Export as PNG";
@@ -42,7 +69,9 @@ button.addEventListener("click", () => {
 		1,
 	);
 });
-main.appendChild(button);
+controls.appendChild(button);
+
+main.appendChild(controls);
 
 /* Workers */
 const threadCount = navigator.hardwareConcurrency || 1;
@@ -51,7 +80,7 @@ let workers: Worker[] = [];
 let completedSamples = 0;
 
 let cameraTheta = 0.3;
-let cameraPhi = Math.PI / 2 * 0.8;
+let cameraPhi = (Math.PI / 2) * 0.8;
 let radius = 13;
 
 const target = new Point3(0, 1, 0);
@@ -106,8 +135,7 @@ function startRendering() {
 			}
 
 			progress.value = (completedSamples += 1) /
-				(Math.ceil(threadCount * SAMPLES_PER_PIXEL)) *
-				100;
+				(Math.ceil(threadCount * SAMPLES_PER_PIXEL)) * 100;
 		};
 
 		const yStart = i * batchSize;
@@ -127,6 +155,7 @@ function startRendering() {
 
 startRendering();
 
+/* Listeners */
 let isDragging = false;
 let lastMouseX = 0;
 let lastMouseY = 0;
@@ -153,10 +182,6 @@ canvas.addEventListener("mousemove", (e) => {
 	lastMouseY = e.clientY;
 
 	startRendering();
-});
-
-canvas.addEventListener("mouseup", () => {
-	isDragging = false;
 });
 
 canvas.addEventListener("mouseleave", () => {
