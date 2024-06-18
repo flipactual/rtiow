@@ -9,7 +9,6 @@
 
 ## Next Steps
 
-- Pinch to zoom
 - Fix wireframe bugs
 - Document what isn't documented
 - Experiment with `oklch`?

@@ -1,9 +1,7 @@
 import Point3 from "./lib/Point3.ts";
 import Vec3 from "./lib/Vec3.ts";
 import Camera from "./lib/Camera.ts";
-
 import xoshiro from "./util/xoshiro.ts";
-
 import getRandomRTIOWFinalScene from "./scene/getRandomRTIOWFinalScene.ts";
 
 const SAMPLES_PER_PIXEL = 500;
@@ -30,7 +28,7 @@ main.appendChild(progress);
 
 /* Export */
 const button = document.createElement("button");
-button.textContent = "Export as PNG ";
+button.textContent = "Export as PNG";
 button.addEventListener("click", () => {
 	canvas.toBlob(
 		(blob) => {
@@ -47,14 +45,14 @@ button.addEventListener("click", () => {
 main.appendChild(button);
 
 /* Workers */
-const threadCount = navigator.hardwareConcurrency || 4;
+const threadCount = navigator.hardwareConcurrency || 1;
 const batchSize = Math.ceil(HEIGHT / threadCount);
 let workers: Worker[] = [];
 let completedSamples = 0;
 
 let cameraTheta = 0.3;
-let cameraPhi = Math.PI / 2 * .8;
-const radius = 13;
+let cameraPhi = Math.PI / 2 * 0.8;
+let radius = 13;
 
 const target = new Point3(0, 1, 0);
 
@@ -167,4 +165,11 @@ canvas.addEventListener("mouseleave", () => {
 
 document.addEventListener("mouseup", () => {
 	isDragging = false;
+});
+
+canvas.addEventListener("wheel", (e) => {
+	e.preventDefault();
+	const zoomAmount = e.deltaY * -0.01;
+	radius = Math.max(1, radius + zoomAmount);
+	startRendering();
 });
