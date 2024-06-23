@@ -9,15 +9,16 @@ import getRayColor from "./util/getRayColor.ts";
 import getRandomRTIOWFinalScene from "./scene/getRandomRTIOWFinalScene.ts";
 
 self.onmessage = (e) => {
-	const { yStart, yEnd, width, height, samplesPerPixel, cameraOrigin, seed }: {
-		yStart: number;
-		yEnd: number;
-		width: number;
-		height: number;
-		samplesPerPixel: number;
-		cameraOrigin: { x: number; y: number; z: number };
-		seed: [number, number, number, number];
-	} = e.data;
+	const { yStart, yEnd, width, height, samplesPerPixel, cameraOrigin, seed }:
+		{
+			yStart: number;
+			yEnd: number;
+			width: number;
+			height: number;
+			samplesPerPixel: number;
+			cameraOrigin: { x: number; y: number; z: number };
+			seed: [number, number, number, number];
+		} = e.data;
 
 	const random = xoshiro(...seed);
 	const world = getRandomRTIOWFinalScene(random);
@@ -56,7 +57,10 @@ self.onmessage = (e) => {
 				const v = (canvasY + random()) / (height - 1);
 				const r = camera.getRay(random, u, v);
 				const color = getRayColor(random, r, world, depth);
-				accumulatedColors[y]![x] = Color.add(accumulatedColors[y]![x]!, color);
+				accumulatedColors[y]![x] = Color.add(
+					accumulatedColors[y]![x]!,
+					color,
+				);
 				result[y]![x]! = accumulatedColors[y]![x]!.sample(s + 1);
 			}
 		}

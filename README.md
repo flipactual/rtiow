@@ -9,6 +9,5 @@
 
 ## Next Steps
 
-- Fix wireframe bugs
 - Document what isn't documented
 - Experiment with `oklch`?

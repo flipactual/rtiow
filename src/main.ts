@@ -5,8 +5,8 @@ import xoshiro from "./util/xoshiro.ts";
 import getRandomRTIOWFinalScene from "./scene/getRandomRTIOWFinalScene.ts";
 
 let SAMPLES_PER_PIXEL = 500;
-const WIDTH = 1280;
-const HEIGHT = Math.floor(WIDTH * (9 / 16));
+let WIDTH = 1280;
+let HEIGHT = Math.floor(WIDTH * (9 / 16));
 const SEED: [number, number, number, number] = [1_000, 2_000, 3_000, 4_000];
 
 /* Main */
@@ -30,6 +30,36 @@ main.appendChild(progress);
 const controls = document.createElement("div");
 controls.id = "controls";
 
+/* Inputs */
+const inputs = document.createElement("div");
+inputs.id = "inputs";
+
+/* Width Input */
+const widthContainer = document.createElement("div");
+widthContainer.classList.add("controls-container");
+
+const widthLabel = document.createElement("label");
+widthLabel.textContent = "Width: ";
+widthLabel.htmlFor = "widthInput";
+
+const widthInput = document.createElement("input");
+widthInput.type = "number";
+widthInput.id = "widthInput";
+widthInput.value = WIDTH.toString();
+widthInput.min = "1";
+widthInput.addEventListener("change", () => {
+	WIDTH = parseInt(widthInput.value, 10);
+	canvas.width = WIDTH;
+	HEIGHT = Math.floor(WIDTH * (9 / 16));
+	canvas.height = HEIGHT;
+	drawWireframe();
+});
+
+widthContainer.appendChild(widthLabel);
+widthContainer.appendChild(widthInput);
+
+inputs.appendChild(widthContainer);
+
 /* Samples Per Pixel Input */
 const samplesContainer = document.createElement("div");
 samplesContainer.classList.add("controls-container");
@@ -45,18 +75,32 @@ samplesInput.value = SAMPLES_PER_PIXEL.toString();
 samplesInput.min = "1";
 samplesInput.addEventListener("change", () => {
 	SAMPLES_PER_PIXEL = parseInt(samplesInput.value, 10);
-	startRendering();
+	drawWireframe();
 });
 
 samplesContainer.appendChild(samplesLabel);
 samplesContainer.appendChild(samplesInput);
 
-controls.appendChild(samplesContainer);
+inputs.appendChild(samplesContainer);
+
+controls.appendChild(inputs);
+
+/* Buttons */
+const buttons = document.createElement("div");
+buttons.id = "buttons";
+
+/* Render */
+const renderButton = document.createElement("button");
+renderButton.textContent = "Render";
+renderButton.addEventListener("click", () => {
+	startRendering();
+});
+buttons.appendChild(renderButton);
 
 /* Export */
-const button = document.createElement("button");
-button.textContent = "Export as PNG";
-button.addEventListener("click", () => {
+const exportButton = document.createElement("button");
+exportButton.textContent = "Export";
+exportButton.addEventListener("click", () => {
 	canvas.toBlob(
 		(blob) => {
 			const newImg = document.createElement("img");
@@ -69,7 +113,9 @@ button.addEventListener("click", () => {
 		1,
 	);
 });
-controls.appendChild(button);
+buttons.appendChild(exportButton);
+
+controls.appendChild(buttons);
 
 main.appendChild(controls);
 
@@ -93,12 +139,7 @@ function getCameraOrigin(): Point3 {
 	);
 }
 
-function startRendering() {
-	workers.forEach((worker) => worker.terminate());
-	workers = [];
-	completedSamples = 0;
-	progress.value = 0;
-
+function drawWireframe() {
 	const cameraOrigin = getCameraOrigin();
 
 	const random = xoshiro(...SEED);
@@ -119,6 +160,17 @@ function startRendering() {
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	context.fillStyle = `color(display-p3 0 0 0)`;
 	world.draw(context, camera);
+}
+
+drawWireframe();
+
+function startRendering() {
+	workers.forEach((worker) => worker.terminate());
+	workers = [];
+	completedSamples = 0;
+	progress.value = 0;
+
+	const cameraOrigin = getCameraOrigin();
 
 	for (let i = 0; i < threadCount; i++) {
 		const worker = new Worker("worker.js");
@@ -153,8 +205,6 @@ function startRendering() {
 	}
 }
 
-startRendering();
-
 /* Listeners */
 let isDragging = false;
 let lastMouseX = 0;
@@ -181,7 +231,7 @@ canvas.addEventListener("mousemove", (e) => {
 	lastMouseX = e.clientX;
 	lastMouseY = e.clientY;
 
-	startRendering();
+	drawWireframe();
 });
 
 canvas.addEventListener("mouseleave", () => {
@@ -195,6 +245,6 @@ document.addEventListener("mouseup", () => {
 canvas.addEventListener("wheel", (e) => {
 	e.preventDefault();
 	const zoomAmount = e.deltaY * -0.01;
-	radius = Math.max(1, radius + zoomAmount);
-	startRendering();
+	radius = Math.max(1, radius - zoomAmount);
+	drawWireframe();
 });

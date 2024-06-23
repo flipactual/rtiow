@@ -1,4 +1,5 @@
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
@@ -21,6 +22,10 @@ progress {
 }
 
 #controls {
+}
+
+#inputs,
+#buttons {
   padding: 1.5ch 0;
   display: flex;
   justify-content: space-between;
@@ -39,4 +44,8 @@ progress {
   & > * {
     flex: 1;
   }
+}
+
+button {
+  padding: 0.5ch 1ch;
 }
