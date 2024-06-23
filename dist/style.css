@@ -7,11 +7,12 @@
 html,
 body {
   accent-color: color(display-p3 1 0 1);
-  background-color: color(display-p3 0.75 0.75 0.75);
+  background-color: color(display-p3 0.9 0.9 0.9);
 }
 
 main {
-  margin: 0 3ch;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 canvas,
