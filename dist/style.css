@@ -10,9 +10,19 @@ body {
   background-color: color(display-p3 0.9 0.9 0.9);
 }
 
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 main {
-  max-width: 720px;
+  width: 640px;
   margin: 0 auto;
+}
+
+canvas {
+  border: 1px dotted color(display-p3 0 0 0);
 }
 
 canvas,
@@ -20,9 +30,6 @@ img,
 progress {
   margin: 1.5ch 0;
   width: 100%;
-}
-
-#controls {
 }
 
 #inputs,

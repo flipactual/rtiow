@@ -140,6 +140,8 @@ function getCameraOrigin(): Point3 {
 }
 
 function drawWireframe() {
+	kill();
+
 	const cameraOrigin = getCameraOrigin();
 
 	const random = xoshiro(...SEED);
@@ -164,11 +166,15 @@ function drawWireframe() {
 
 drawWireframe();
 
-function startRendering() {
+function kill() {
 	workers.forEach((worker) => worker.terminate());
 	workers = [];
 	completedSamples = 0;
 	progress.value = 0;
+}
+
+function startRendering() {
+	kill();
 
 	const cameraOrigin = getCameraOrigin();
 
