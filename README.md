@@ -10,4 +10,5 @@
 ## Next Steps
 
 - Document what isn't documented
+- Clean up export (one image at a time, et c.)
 - Experiment with `oklch`?

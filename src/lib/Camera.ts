@@ -62,9 +62,13 @@ export default class Camera {
 
 		this.lensRadius = aperture / 2;
 	}
+
 	/** Get a Ray from the Camera */
 	getRay(random: () => number, s: number, t: number): Ray {
-		const rd = Vec3.multiply(this.lensRadius, Vec3.randomInUnitDisk(random));
+		const rd = Vec3.multiply(
+			this.lensRadius,
+			Vec3.randomInUnitDisk(random),
+		);
 		const offset = Vec3.add(
 			Vec3.multiply(this.u, rd.x),
 			Vec3.multiply(this.v, rd.y),
@@ -80,6 +84,7 @@ export default class Camera {
 			Vec3.subtract(Vec3.subtract(sum, this.origin), offset),
 		);
 	}
+
 	/** Convert world coordinates to screen coordinates */
 	worldToScreen(
 		point: Point3,
